@@ -24,6 +24,9 @@ export class Games {
   @Column('uuid')
   roomId: string;
 
+  @Column('int')
+  slots: number;
+
   @Column({
     type: 'enum',
     enum: ['RECRUITMENT', 'PASSES', 'FINISHED'],

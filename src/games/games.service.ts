@@ -5,6 +5,7 @@ import { Games } from './games.entity';
 import { Participants } from '../participants/participants.entity';
 import { Rounds } from '../rounds/rounds.entity';
 import { UsersService } from 'src/users/users.service';
+import { Rooms } from 'src/rooms/rooms.entity';
 
 @Injectable()
 export class GamesService {
@@ -17,6 +18,9 @@ export class GamesService {
 
     @InjectRepository(Participants)
     private participantsRepository: Repository<Participants>,
+
+    @InjectRepository(Rooms)
+    private roomsRepository: Repository<Rooms>,
 
     private usersService: UsersService,
   ) {}
@@ -70,12 +74,17 @@ export class GamesService {
     };
   }
 
-  async createGame(roomId: string, telegramId: number): Promise<any> {
+  async createGame(
+    roomId: string,
+    telegramId: number,
+    slots: number,
+  ): Promise<any> {
     const user = await this.usersService.findByTelegramId(telegramId + '');
 
     const game = this.gamesRepository.create({
       status: 'RECRUITMENT',
       roomId,
+      slots,
       players: [
         {
           telegramId: user.telegramId,
@@ -88,7 +97,7 @@ export class GamesService {
     // Create a new round for the game
     const round = await this.createRound(game);
 
-    // // Create a new participant and associate it with the round
+    // Create a new participant and associate it with the round
     const participant = this.participantsRepository.create({
       telegramId,
       position: 1,
@@ -106,30 +115,61 @@ export class GamesService {
     return game;
   }
 
-  async joinGame(roomId: string, telegramId: number): Promise<Games> {
-    console.log(roomId, telegramId);
-
+  async joinGame(telegramId: number, roomId: string): Promise<Games> {
     // Find the game by gameId and check if it has RECRUITMENT status
     let game = await this.gamesRepository.findOne({
       where: { roomId, status: 'RECRUITMENT' },
       relations: ['rounds', 'rounds.participants'],
     });
 
-    const user = await this.usersService.findByTelegramId(telegramId + '');
+    const room = await this.roomsRepository.findOne({ where: { id: roomId } });
 
     if (!game) {
       // If no game found with RECRUITMENT status, create a new game
-      game = await this.createGame(roomId, telegramId);
+      game = await this.createGame(roomId, telegramId, room.slots);
+    } else {
+      const user = await this.usersService.findByTelegramId(telegramId + '');
+
+      const round = game.rounds[0];
+
+      const position = round.participants.length + 1;
+
+      let existsParticipant = round.participants.find(
+        (el) => el.telegramId === telegramId,
+      );
+
+      if (!existsParticipant) {
+        existsParticipant = this.participantsRepository.create({
+          telegramId,
+          position,
+          name: user.name,
+          avatar: user.avatar,
+          isChamber: false,
+          isShoot: false,
+          isReady: false,
+          shoot: null,
+          round,
+        });
+
+        await this.participantsRepository.save(existsParticipant);
+
+        await this.roundsRepository.save({
+          ...round,
+          participants: [...round.participants, existsParticipant],
+        });
+
+        await this.gamesRepository.save({
+          ...game,
+          players: [...game.players, { telegramId, avatar: user.avatar }],
+        });
+      }
     }
 
     // Return the updated game with its rounds and participants
-
     const result = await this.gamesRepository.findOne({
       where: { id: game.id },
       relations: ['rounds', 'rounds.participants'],
     });
-
-    console.log(result);
 
     return result;
   }

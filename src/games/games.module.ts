@@ -10,13 +10,16 @@ import { Participants } from '../participants/participants.entity';
 import { UsersService } from 'src/users/users.service';
 import { User } from 'src/users/user.entity';
 import { HttpModule } from '@nestjs/axios';
+import { Rooms } from 'src/rooms/rooms.entity';
+import { RoomsModule } from 'src/rooms/rooms.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Games, Rounds, Participants, User]),
+    TypeOrmModule.forFeature([Games, Rounds, Participants, User, Rooms]),
     RoundsModule,
     ParticipantsModule,
     HttpModule,
+    RoomsModule,
   ],
   controllers: [GamesController],
   providers: [GamesService, UsersService],

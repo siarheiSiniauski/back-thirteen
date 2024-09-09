@@ -23,8 +23,12 @@ export class CreateParticipantsTable1725198400000
             default: 'uuid_generate_v4()',
           },
           {
+            name: 'roundId',
+            type: 'uuid',
+          },
+          {
             name: 'telegramId',
-            type: 'bigint',
+            type: 'int',
           },
           {
             name: 'position',
@@ -62,10 +66,6 @@ export class CreateParticipantsTable1725198400000
             name: 'created_at',
             type: 'timestamp',
             default: 'CURRENT_TIMESTAMP',
-          },
-          {
-            name: 'roundId',
-            type: 'uuid',
           },
         ],
       }),

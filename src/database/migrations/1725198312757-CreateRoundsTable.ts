@@ -5,8 +5,8 @@ import {
   TableForeignKey,
 } from 'typeorm';
 
-export class CreateRoundsTable1725198312760 implements MigrationInterface {
-  name = 'CreateRoundsTable1725198312760';
+export class CreateRoundsTable1725198312757 implements MigrationInterface {
+  name = 'CreateRoundsTable1725198312757';
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     // Create the rounds table
@@ -24,6 +24,17 @@ export class CreateRoundsTable1725198312760 implements MigrationInterface {
           {
             name: 'gameId',
             type: 'uuid',
+          },
+          {
+            name: 'nextRound',
+            type: 'uuid',
+            isNullable: true, // make it nullable since it's not always required
+          },
+          {
+            name: 'status',
+            type: 'enum',
+            enum: ['RECRUITMENT', 'WAITING', 'READY', 'GAME', 'GAME_OVER'],
+            default: "'RECRUITMENT'",
           },
           {
             name: 'created_at',

@@ -2,13 +2,13 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { RoomsModule } from './rooms/rooms.module';
-import { getConfigPostgres } from './configs/postgres.config';
 import { GamesModule } from './games/games.module';
 import { RoundsController } from './rounds/rounds.controller';
 import { RoundsModule } from './rounds/rounds.module';
 import { ParticipantsController } from './participants/participants.controller';
 import { ParticipantsModule } from './participants/participants.module';
 import { UsersModule } from './users/users.module';
+import { getDatabaseConfig } from './configs/database.config';
 
 @Module({
   imports: [
@@ -19,7 +19,7 @@ import { UsersModule } from './users/users.module';
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
-      useFactory: getConfigPostgres,
+      useFactory: getDatabaseConfig,
     }),
     // KafkaModule,
     // WebsocketModule,

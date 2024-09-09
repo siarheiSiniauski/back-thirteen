@@ -26,9 +26,9 @@ export class GamesController {
 
   @Post('join')
   async joinGame(
-    @Body() body: { telegramId: number; gameId: string },
+    @Body() body: { telegramId: number; roomId: string },
   ): Promise<Games> {
-    const { telegramId, gameId } = body;
-    return await this.gamesService.joinGame(gameId, telegramId);
+    const { telegramId, roomId } = body;
+    return await this.gamesService.joinGame(telegramId, roomId);
   }
 }

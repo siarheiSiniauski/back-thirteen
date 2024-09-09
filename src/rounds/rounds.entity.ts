@@ -8,6 +8,13 @@ import {
 import { Participants } from '../participants/participants.entity';
 import { Games } from '../games/games.entity';
 
+export type RoundStatus =
+  | 'RECRUITMENT'
+  | 'WAITING'
+  | 'READY'
+  | 'GAME'
+  | 'GAME_OVER';
+
 @Entity()
 export class Rounds {
   @PrimaryGeneratedColumn('uuid')
@@ -15,6 +22,16 @@ export class Rounds {
 
   @Column('uuid')
   gameId: string;
+
+  @Column('uuid', { nullable: true })
+  nextRound: string;
+
+  @Column({
+    type: 'enum',
+    enum: ['RECRUITMENT', 'WAITING', 'READY', 'GAME', 'GAME_OVER'],
+    default: 'RECRUITMENT',
+  })
+  status: RoundStatus;
 
   @ManyToOne(() => Games, (game) => game.rounds, { onDelete: 'CASCADE' })
   game: Games;

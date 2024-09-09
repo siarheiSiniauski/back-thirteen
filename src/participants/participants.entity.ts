@@ -13,7 +13,7 @@ export class Participants {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column('bigint')
+  @Column('int')
   telegramId: number;
 
   @Column('int')

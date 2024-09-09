@@ -7,9 +7,6 @@ import * as dotenv from 'dotenv';
 
 dotenv.config();
 
-console.log(process.env.KAFKA_BROKER);
-console.log(process.env.KAFKA_GROUP_ID);
-
 export const getConfigKafka = (): ClientsModuleOptions => {
   return [
     {

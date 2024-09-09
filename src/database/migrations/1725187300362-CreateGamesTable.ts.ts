@@ -14,6 +14,10 @@ export class CreateGamesTable1725187300362 implements MigrationInterface {
             default: 'uuid_generate_v4()',
           },
           {
+            name: 'roomId',
+            type: 'uuid',
+          },
+          {
             name: 'status',
             type: 'enum',
             enum: ['RECRUITMENT', 'PASSES', 'FINISHED'],
